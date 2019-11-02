@@ -89,7 +89,7 @@ class MyHTMLParser(HTMLParser):
                     self.data_counter += 1
                 else:
                     daily_temps = {'Max': self.max, 'Min': self.min, 'Mean': self.mean}
-                    self.weather = {self.date: daily_temps}
+                    self.weather.update({self.date: daily_temps})
                     self.attr_flag = False
                     self.data_counter = 0
                     self.data_reset()
@@ -127,7 +127,7 @@ myparser = MyHTMLParser()
 weather = {}
 all_weather = {}
 
-def get_data(url):
+def scrape_page(url):
     with urllib.request.urlopen(url) as response:
         html = str(response.read())
 
@@ -138,14 +138,22 @@ def get_data(url):
 
     return weather
 
+def scrape_all_weather():
+    for year in range(2019, 1996, -1):
+        print(str(year))
+        for month in range(12, 0, -1):
+            print(str(month))
+            for day in range(31, 0, -1):
+                print(str(day))
+                url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear=2018&Day=' + str(day) + '&Year=' + str(year) + '&Month=' + str(month)
+            #url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear=2018&Day=1&Year=' + str(year) + '&Month=' + str(month)
+                w = scrape_page(url)
+                for k, v in w.items():
+                    all_weather.update({k: v})
 
-for year in range(2019, 1995, -1):
-    print(str(year))
-    for month in range(12, 0, -1):
-        print(str(month))
-        url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear=2018&Day=1&Year=' + str(year) + '&Month=' + str(month)
-        w = get_data(url)
-        for k, v in w.items():
-            all_weather.update({k: v})
+    return all_weather
+
+
+scrape_all_weather()
 
 print(all_weather)
