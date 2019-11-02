@@ -1,0 +1,7 @@
+README.txt
+colorscraper.py
+setup.py
+ColorScraper.egg-info/PKG-INFO
+ColorScraper.egg-info/SOURCES.txt
+ColorScraper.egg-info/dependency_links.txt
+ColorScraper.egg-info/top_level.txt

@@ -1,0 +1,9 @@
+body {
+  background: #EFEFEF;
+  color: #8B0000;
+  font-family: 'Roboto', sans-serif;
+}
+
+h1 {
+  border-bottom: 2px solid grey;
+}

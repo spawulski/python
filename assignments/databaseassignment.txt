@@ -1,0 +1,6 @@
+Criteria       price    python   easy
+
+libraOffice
+Postgres
+MSSQL
+SQlite

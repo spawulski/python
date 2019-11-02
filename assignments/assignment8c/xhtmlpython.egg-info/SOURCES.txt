@@ -1,0 +1,7 @@
+README.txt
+setup.py
+xhtmlpython.py
+xhtmlpython.egg-info/PKG-INFO
+xhtmlpython.egg-info/SOURCES.txt
+xhtmlpython.egg-info/dependency_links.txt
+xhtmlpython.egg-info/top_level.txt
