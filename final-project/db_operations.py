@@ -45,6 +45,8 @@ class DBOperations():
                     data = (k, loca, v['Min'], v['Max'], v['Mean'])
                     if not self.check_if_exist(k):
                         self.cur.execute(sql, data)
+                    else:
+                        print(k + " was not inserted into db")
                 except Exception as e:
                     print("Error:", e)
 
@@ -52,20 +54,20 @@ class DBOperations():
         except Exception as e:
             print("Error:", e)
 
-
     def check_if_exist(self, day):
-        self.cur.execute("""SELECT id
-                                  ,date
-                                  ,location
-                            FROM samples
-                            WHERE date=?""",
-                         (day))
+        #sql = """SELECT id, date, location FROM samples WHERE date=?"""
+        #self.cur.execute(sql, (day))
 
-        result = self.cur.fetchone()
+        #result = self.cur.fetchone()
+        result = self.cur.execute("""SELECT date
+                                     FROM samples
+                                     WHERE date=?""", (day, )).fetchone()
         if result:
             print(result)
+            print("Date did exist")
             return True
         else:
+            print("Date did not exist")
             return False
 
 

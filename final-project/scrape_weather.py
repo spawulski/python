@@ -1,10 +1,18 @@
+"""
+This is the documentation for scrape_weather module.
+
+scrape_weather scrapes the daily weather from the internet
+and passes a dict with the data.
+"""
 from html.parser import HTMLParser
-from html.entities import name2codepoint
 import urllib.request
 import datetime
+import badwords
 
 
 class MyHTMLParser(HTMLParser):
+    """Parse data from web pages."""
+
     attr_flag = False
     data_counter = 0
     weather = {}
@@ -14,68 +22,43 @@ class MyHTMLParser(HTMLParser):
     max = ''
     mean = ''
 
-    bad_words = ['scheme', 'W3CDTF', 'Google Tag Manager',
-                 """Environment and Climate Change Canada -
-                  Meteorological Service of Canada""", 'degrees', 'minute',
-                 'second', 'North', 'West', 'East', 'South',
-                 'World Meteorological Organization',
-                 'Transport Canada', 'Comma Separated Values',
-                 'Extensible Markup Language', 'metre', 'Maximum Temperature',
-                 'degrees Celsius', 'Daily Maximum Temperature Chart',
-                 'Minimum Temperature', 'Daily Minimum Temperature Chart',
-                 'Mean Temperature', 'Daily Mean Temperature Chart',
-                 'Heating Degree Days', 'Daily Heating Degree Days Chart',
-                 'millimetres', 'Daily Total Rain Chart', 'centimetres',
-                 'Daily Total Snow Chart', 'Total Precipitation',
-                 'Daily Total Precipitation Chart', 'Cooling Degree Days',
-                 'Daily Cooling Degree Days Chart', 'Snow on Ground',
-                 'Daily Snow on Ground Chart', 'Direction of Maximum Gust',
-                 'tens of degrees', 'Speed of Maximum Gust',
-                 'kilometres per hour', 'Daily Speed of Maximum Gust Chart',
-                 'Environment and Climate Change Canada - Meteorological Service of Canada',
-                 'Average', 'Extreme'
-                 ]
-
-
-
     def handle_starttag(self, tag, attrs):
-        #print("Start tag:", tag)
+        """
+        Check attriutes.
+
+        Eliminate bad attributes by checking against
+        badwords. Save date to class variable.
+        Set flag to true for handle_data().
+        """
+        f = '%B %d, %Y'
+        t = '%Y-%m-%d'
+
         for attr in attrs:
             if "title" in attr:
-                if attr[1] not in self.bad_words:
-                    #self.date = attr[1]
-                    self.date = datetime.datetime.strptime(attr[1], '%B %d, %Y').strftime('%Y-%m-%d')
+                if attr[1] not in badwords.bad_words:
+                    a = attr[1]
+                    self.date = datetime.datetime.strptime(a, f).strftime(t)
                     self.attr_flag = True
-                    #date_array = attr[1].split(" ")
-                    #date_array[1] = date_array[1][:-1]
-                    #print("     attr:", attr)
-
-
 
     def float_checker(self, s):
+        """Check value to see if float."""
         try:
             float(s)
             return True
-        except Exception as e:
-            #print("Exception: ", e)
+        except Exception:
             return False
 
-
     def data_reset(self):
+        """Reset variables used in dict creation."""
         self.day = ''
         self.max = ''
         self.min = ''
         self.mean = ''
 
-
-    #def handle_endtag(self, tag):
-    #    print("End tag :", tag)
-
     def handle_data(self, data):
         if self.attr_flag:
             if self.float_checker(data.strip()):
                 if self.data_counter < 4:
-                    #print("Data  :", data)
                     if self.data_counter == 0:
                         self.day = data
                     if self.data_counter == 1:
@@ -95,33 +78,6 @@ class MyHTMLParser(HTMLParser):
                     self.data_reset()
 
 
-    #def handle_comment(self, data):
-    #    print("Comment  :", data)
-
-    #def handle_entityref(self, name):
-    #    c = chr(name2codepoint[name])
-#        print("Named ent:", c)
-
-#    def handle_charref(self, name):
-#        if name.startswith('x'):
-#            c = chr(int(name[1:], 16))
-#        else:
-#            c = chr(int(name))
-#        print("Num ent  :", c)
-
-#    def handle_decl(self, data):
-#        print("Decl     :", data)
-
-
-#url = "https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear=2018&Day=1&Year=2018&Month=5"
-
-years = ['1996', '1997', '1998', '1999', '2000', '2001', '2002', '2003',
-         '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011',
-         '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
-
-#months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
-
-
 myparser = MyHTMLParser()
 
 weather = {}
@@ -139,7 +95,7 @@ def scrape_page(url):
     return weather
 
 def scrape_all_weather():
-    for year in range(2019, 2015, -1):
+    for year in range(2019, 2010, -1):
         print(str(year))
         for month in range(12, 0, -1):
             print(str(month))
