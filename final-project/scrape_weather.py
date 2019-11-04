@@ -139,21 +139,21 @@ def scrape_page(url):
     return weather
 
 def scrape_all_weather():
-    for year in range(2019, 1996, -1):
+    for year in range(2019, 2015, -1):
         print(str(year))
         for month in range(12, 0, -1):
             print(str(month))
-            for day in range(31, 0, -1):
-                print(str(day))
-                url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear=2018&Day=' + str(day) + '&Year=' + str(year) + '&Month=' + str(month)
+            #for day in range(31, 0, -1):
+            #    print(str(day))
+            url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear=2018&Day=' + '1' + '&Year=' + str(year) + '&Month=' + str(month)
             #url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear=2018&Day=1&Year=' + str(year) + '&Month=' + str(month)
-                w = scrape_page(url)
-                for k, v in w.items():
-                    all_weather.update({k: v})
+            w = scrape_page(url)
+            for k, v in w.items():
+                all_weather.update({k: v})
 
     return all_weather
 
 
-scrape_all_weather()
+#scrape_all_weather()
 
-print(all_weather)
+#print(all_weather)
