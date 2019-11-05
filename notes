@@ -1,0 +1,34 @@
+Project
+scraping
+  back from today, to the start
+  Don't hard code 1996 into the code
+  start with current month somehow
+  Try using a while loop for the year
+db
+  pretty straightforward
+plotting
+  figure it out
+  make a basic box plot
+  make sure the plot you make has all the lables intact and it looks like the example
+  box plot does math for us, just pass it lists of data
+  
+  Bonus: display line plot from a month x axis becomes days instead of months
+
+userinteraction
+  FOR SURE SURE __name__ == __main__ this one
+  promt user to download everything, or just do an update.
+  Be really specific with user options.
+
+Package
+  pixabay = free pictures dont even need to attribute them
+  open source licence agreements = opensource.org licences MIT is good option
+
+pep8
+  Code needs to adhear to pep8 standards
+  He wants us to instal pytest and pytest-pep8
+  py.test --pep8 scrape_weather.py
+
+Part - 7 Super Bonus!
+  wxPython
+  matplotlib can open in its own window
+  wxformbuilder is gud - github page
