@@ -5,6 +5,7 @@ scrape_weather scrapes the daily weather from the internet
 and passes a dict with the data.
 """
 from html.parser import HTMLParser
+from datetime import date
 import urllib.request
 import datetime
 import badwords
@@ -16,6 +17,7 @@ class MyHTMLParser(HTMLParser):
     attr_flag = False
     data_counter = 0
     weather = {}
+    temp_weather = {}
     date = ''
     day = ''
     min = ''
@@ -37,6 +39,7 @@ class MyHTMLParser(HTMLParser):
             if "title" in attr:
                 if attr[1] not in badwords.bad_words:
                     a = attr[1]
+                    #print(a)
                     self.date = datetime.datetime.strptime(a, f).strftime(t)
                     self.attr_flag = True
 
@@ -68,11 +71,11 @@ class MyHTMLParser(HTMLParser):
                     if self.data_counter == 3:
                         self.mean = data
 
-                    #print(self.data_counter)
                     self.data_counter += 1
                 else:
                     daily_temps = {'Max': self.max, 'Min': self.min, 'Mean': self.mean}
                     self.weather.update({self.date: daily_temps})
+                    self.temp_weather.update({self.date: daily_temps})
                     self.attr_flag = False
                     self.data_counter = 0
                     self.data_reset()
@@ -80,22 +83,31 @@ class MyHTMLParser(HTMLParser):
 
 myparser = MyHTMLParser()
 
-weather = {}
 all_weather = {}
 
+
 def scrape_page(url):
+    see_if_this_fix = {}
+    see_if_this_fix = myparser.temp_weather
+    myparser.temp_weather.clear()
     with urllib.request.urlopen(url) as response:
         html = str(response.read())
 
     myparser.feed(html)
+    return see_if_this_fix
+    #print(myparser)
 
-    for k, v in myparser.weather.items():
-        weather.update({k: v})
+    #for k, v in myparser.weather.items():
+        #print(k)
+    #    see_if_this_fix.update({k: v})
 
-    return weather
+    #return see_if_this_fix
+
 
 def scrape_all_weather():
-    for year in range(2019, 2010, -1):
+    today = date.today()
+    current_year = today.strftime("%Y")
+    for year in range(int(current_year), 0, -1):
         print(str(year))
         for month in range(12, 0, -1):
             print(str(month))
@@ -105,11 +117,19 @@ def scrape_all_weather():
             #url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear=2018&Day=1&Year=' + str(year) + '&Month=' + str(month)
             w = scrape_page(url)
             for k, v in w.items():
-                all_weather.update({k: v})
+                #print(k, v)
+                thing = k[0:4]
+                year_from_page = datetime.datetime.strptime(thing, "%Y")
+                year_from_page = year_from_page.strftime("%Y")
+                print("Date from webpage: " + str(year_from_page))
+                print("year from loop:    " + str(year))
+                if int(year_from_page) != year:
+                    print(url)
+                    return myparser.weather
+                myparser.weather.update({k: v})
 
-    return all_weather
 
 
 #scrape_all_weather()
 
-#print(all_weather)
+##print(all_weather)

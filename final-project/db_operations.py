@@ -28,7 +28,7 @@ class DBOperations():
                                avg_temp real not null);""")
                 print("Table created successfully.")
             except Exception as e:
-                print("Error:", e)
+                print(e)
         except Exception as e:
             print("Error:", e)
 
@@ -75,7 +75,9 @@ class DBOperations():
     def printdb(self):
         """Print out contents of dataBase."""
         try:
-            for row in self.cur.execute("select * from samples"):
+            for row in self.cur.execute("""SELECT *
+                                           FROM samples
+                                           ORDER BY date"""):
                 try:
                     print(row)
                 except Exception as e:
@@ -83,26 +85,52 @@ class DBOperations():
         except Exception as e:
             print("Error:", e)
 
+    def between(self, a, b):
+        sql = """SELECT date, min_temp, max_temp, avg_temp
+                 FROM samples
+                 WHERE samples.date between
+                 ? AND ?
+                 ORDER BY date"""
+        data = (a, b)
+        try:
+            for row in self.cur.execute(sql, data):
+                print(row)
+        except Exception as e:
+            print("Error", e)
+
+#
+#
+# This is example of between
+#
+#
+#try:
+#    sample_database = DBOperations()
+#    sample_database.between('2015', '2020')
+#except Exception as e:
+#    print("Error", e)
+
 
 try:
-    weather = {"2018-06-01": {"Max": 12.0,
-                              "Min": 5.6,
-                              "Mean": 7.1},
-               "2018-06-02": {"Max": 22.2,
-                              "Min": 11.1,
-                              "Mean": 15.5},
-               "2018-06-03": {"Max": 31.3,
-                              "Min": 29.9,
-                              "Mean": 30.0}}
-
+    #weather = {"2018-06-01": {"Max": 12.0,
+    #                          "Min": 5.6,
+    #                          "Mean": 7.1},
+    #           "2018-06-02": {"Max": 22.2,
+    #                          "Min": 11.1,
+    #                          "Mean": 15.5},
+    #           "2018-06-03": {"Max": 31.3,
+    #                          "Min": 29.9,
+    #                          "Mean": 30.0}}
     try:
         sample_database = DBOperations()
     except Exception as e:
         print("Error:", e)
-    sample_database.insert(scrape_weather.scrape_all_weather())
     try:
-        sample_database.printdb()
+        sample_database.insert(scrape_weather.scrape_all_weather())
     except Exception as e:
         print("Error:", e)
+    #try:
+        #sample_database.printdb()
+    #except Exception as e:
+    #    print("Error:", e)
 except Exception as e:
     print("Error:", e)
