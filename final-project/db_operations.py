@@ -101,6 +101,29 @@ class DBOperations():
             print("Error", e)
         return to_pass
 
+    def recent(self):
+        """Return only the date of the most recent db entry."""
+        sql = """SELECT date
+                 FROM samples
+                 ORDER BY date DESC
+                 LIMIT 1"""
+        for row in self.cur.execute(sql):
+            return row
+
+    def oldest(self):
+        """Return only the date of the most recent db entry."""
+        sql = """SELECT date
+                 FROM samples
+                 ORDER BY date ASC
+                 LIMIT 1"""
+        for row in self.cur.execute(sql):
+            return row
+
+    def update(self, date):
+        """Update db."""
+        db = DBOperations()
+        db.insert(scrape_weather.recent_weather(date))
+
 #
 #
 # This is example of between

@@ -149,9 +149,6 @@ def scrape_all_weather():
                 # Get year value to appear as 4 digits
                 year_from_page = datetime.datetime.strptime(y, "%Y")
                 year_from_page = year_from_page.strftime("%Y")
-                # For trouble shooting
-                # print("Date from webpage: " + str(year_from_page))
-                # print("year from loop:    " + str(year))
 
                 # Checks to see if the year from the parsed page
                 # Is the intended year to scraped
@@ -162,6 +159,64 @@ def scrape_all_weather():
                     print(url)
                     return myparser.weather
                 myparser.weather.update({k: v})
+
+
+def recent_weather(t):
+    """Update weather db."""
+    a = 'https://climate.weather.gc.ca/'
+    b = 'climate_data/daily_data_e.html?'
+    c = 'StationID=27174&timeframe=2&'
+    d = 'StartYear=1840&EndYear=2018&Day='
+    full = a + b + c + d
+    # Set variable to todays date.
+    today = date.today()
+    # Pull the year out of that.
+    current_year = int(today.strftime("%Y"))
+    current_month = int(today.strftime("%m"))
+
+    to_year = int(t[0:4])
+    print(to_year)
+    to_month = int(t[5:7])
+    print(to_month)
+
+    if current_year == to_year and current_month == to_month:
+        a = full + '1' + '&Year=' + str(current_year) + '&Month='
+        url = a + str(current_month)
+        w = scrape_page(url)
+        # Iterate through the monthly_weather dict that came from scrape
+        for k, v in w.items():
+            # Slice the year out of the key
+            y = k[0:4]
+            # Get year value to appear as 4 digits
+            year_from_page = datetime.datetime.strptime(y, "%Y")
+            year_from_page = year_from_page.strftime("%Y")
+            print(url)
+            myparser.weather.update({k: v})
+            return myparser.weather
+    else:
+        while current_year >= to_year:
+            print(current_year)
+            while current_month >= to_month:
+                print(current_month)
+                a = full + '1' + '&Year=' + str(current_year)
+                url = a + '&Month=' + str(current_month)
+                w = scrape_page(url)
+                # Iterate through the monthly_weather dict from scrape
+                for k, v in w.items():
+                    # Slice the year out of the key
+                    y = k[0:4]
+                    # Get year value to appear as 4 digits
+                    year_from_page = datetime.datetime.strptime(y, "%Y")
+                    year_from_page = year_from_page.strftime("%Y")
+                    print(url)
+                    myparser.weather.update({k: v})
+
+                current_month -= 1
+            current_year -= 1
+        return myparser.weather
+
+
+# recent_weather('2018-04-21')
 
 
 # scrape_all_weather()
