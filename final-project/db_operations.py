@@ -1,7 +1,7 @@
 """
-This is the documentation for database competency.
+This is the documentation for db_operations module.
 
-This is our first time working with databases in python.
+This module performs all of the nessessary database interatcion.
 """
 
 
@@ -86,6 +86,7 @@ class DBOperations():
 
     def between(self, a, b):
         """Get weather data within a range passed in to method."""
+        to_pass = []
         sql = """SELECT date, min_temp, max_temp, avg_temp
                  FROM samples
                  WHERE samples.date between
@@ -94,9 +95,11 @@ class DBOperations():
         data = (a, b)
         try:
             for row in self.cur.execute(sql, data):
-                print(row)
+                to_pass.append(row)
+                # print(row)
         except Exception as e:
             print("Error", e)
+        return to_pass
 
 #
 #
@@ -110,18 +113,19 @@ class DBOperations():
 #    print("Error", e)
 
 
-try:
+if __name__ == "__main__":
     try:
-        sample_database = DBOperations()
+        try:
+            sample_database = DBOperations()
+        except Exception as e:
+            print("Error:", e)
+        try:
+            sample_database.insert(scrape_weather.scrape_all_weather())
+        except Exception as e:
+            print("Error:", e)
+        # try:
+        # sample_database.printdb()
+        # except Exception as e:
+        #    print("Error:", e)
     except Exception as e:
         print("Error:", e)
-    try:
-        sample_database.insert(scrape_weather.scrape_all_weather())
-    except Exception as e:
-        print("Error:", e)
-    # try:
-    # sample_database.printdb()
-    # except Exception as e:
-    #    print("Error:", e)
-except Exception as e:
-    print("Error:", e)
