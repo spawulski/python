@@ -39,7 +39,6 @@ class MyHTMLParser(HTMLParser):
             if "title" in attr:
                 if attr[1] not in badwords.bad_words:
                     a = attr[1]
-                    #print(a)
                     self.date = datetime.datetime.strptime(a, f).strftime(t)
                     self.attr_flag = True
 
@@ -52,15 +51,21 @@ class MyHTMLParser(HTMLParser):
             return False
 
     def data_reset(self):
-        """Reset variables used in dict creation."""
+        """Reset variables used in weather dict creation."""
         self.day = ''
         self.max = ''
         self.min = ''
         self.mean = ''
 
     def handle_data(self, data):
+        """Extract the actual weather data we want from the page."""
+        # Check attribute flag
         if self.attr_flag:
+            # If data is a float, at this point we know its the data we want
             if self.float_checker(data.strip()):
+                # Here we add a counter, based on the counter value
+                # we know what the data represents.
+                # In this case its the day, max, min, or mean temp.
                 if self.data_counter < 4:
                     if self.data_counter == 0:
                         self.day = data
@@ -72,8 +77,15 @@ class MyHTMLParser(HTMLParser):
                         self.mean = data
 
                     self.data_counter += 1
+                # When the counter = 4, we have the data scraped for
+                # the particular day. It can now be put into the 'daily_temps'
+                # dict and pushed to the class dict that holds all the daily
+                # weather
+                # Also reset flags, counter, and daily weather variables.
                 else:
-                    daily_temps = {'Max': self.max, 'Min': self.min, 'Mean': self.mean}
+                    daily_temps = {'Max': self.max,
+                                   'Min': self.min,
+                                   'Mean': self.mean}
                     self.weather.update({self.date: daily_temps})
                     self.temp_weather.update({self.date: daily_temps})
                     self.attr_flag = False
@@ -87,49 +99,71 @@ all_weather = {}
 
 
 def scrape_page(url):
-    see_if_this_fix = {}
-    see_if_this_fix = myparser.temp_weather
+    """Scrape a url that is passed in for weather data."""
+    monthly_weather = {}
+    monthly_weather = myparser.temp_weather
     myparser.temp_weather.clear()
     with urllib.request.urlopen(url) as response:
         html = str(response.read())
 
     myparser.feed(html)
-    return see_if_this_fix
-    #print(myparser)
+    return monthly_weather
+    # print(myparser)
 
-    #for k, v in myparser.weather.items():
-        #print(k)
-    #    see_if_this_fix.update({k: v})
+    # for k, v in myparser.weather.items():
+    # print(k)
+    #    monthly_weather.update({k: v})
 
-    #return see_if_this_fix
+    # return monthly_weather
 
 
 def scrape_all_weather():
+    """
+    Scrape all the weather.
+
+    start with today and moving backward until there is no more weather
+    data to scrape, get all weather data.
+    """
+    a = 'https://climate.weather.gc.ca/'
+    b = 'climate_data/daily_data_e.html?'
+    c = 'StationID=27174&timeframe=2&'
+    d = 'StartYear=1840&EndYear=2018&Day='
+    full = a + b + c + d
+    # Set variable to todays date.
     today = date.today()
+    # Pull the year out of that.
     current_year = today.strftime("%Y")
+    # Iterate through all of the years starting with current and working back.
     for year in range(int(current_year), 0, -1):
         print(str(year))
+        # Iterate through the months backward, starting with December
         for month in range(12, 0, -1):
             print(str(month))
-            #for day in range(31, 0, -1):
-            #    print(str(day))
-            url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear=2018&Day=' + '1' + '&Year=' + str(year) + '&Month=' + str(month)
-            #url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear=2018&Day=1&Year=' + str(year) + '&Month=' + str(month)
+            # Build url to scrape using year and month
+            url = full + '1' + '&Year=' + str(year) + '&Month=' + str(month)
             w = scrape_page(url)
+            # Iterate through the monthly_weather dict that came from scrape
             for k, v in w.items():
-                #print(k, v)
-                thing = k[0:4]
-                year_from_page = datetime.datetime.strptime(thing, "%Y")
+                # Slice the year out of the key
+                y = k[0:4]
+                # Get year value to appear as 4 digits
+                year_from_page = datetime.datetime.strptime(y, "%Y")
                 year_from_page = year_from_page.strftime("%Y")
-                print("Date from webpage: " + str(year_from_page))
-                print("year from loop:    " + str(year))
+                # For trouble shooting
+                # print("Date from webpage: " + str(year_from_page))
+                # print("year from loop:    " + str(year))
+
+                # Checks to see if the year from the parsed page
+                # Is the intended year to scraped
+                # If not, then that means we have worked through
+                # all of the weather data from the site.
+                # Return the full dictionary with all weather data
                 if int(year_from_page) != year:
                     print(url)
                     return myparser.weather
                 myparser.weather.update({k: v})
 
 
+# scrape_all_weather()
 
-#scrape_all_weather()
-
-##print(all_weather)
+# print(all_weather)
