@@ -28,7 +28,7 @@ class DBOperations():
                                avg_temp real not null);""")
                 print("Table created successfully.")
             except Exception as e:
-                print(e)
+                print("")
         except Exception as e:
             print("Error:", e)
 
@@ -108,6 +108,7 @@ class DBOperations():
                  ORDER BY date DESC
                  LIMIT 1"""
         for row in self.cur.execute(sql):
+            print(row)
             return row
 
     def oldest(self):
@@ -117,12 +118,18 @@ class DBOperations():
                  ORDER BY date ASC
                  LIMIT 1"""
         for row in self.cur.execute(sql):
+            print(row)
             return row
 
     def update(self, date):
         """Update db."""
         db = DBOperations()
         db.insert(scrape_weather.recent_weather(date))
+
+    def scrape_all(self):
+        """Insert the full scrape into db."""
+        db = DBOperations()
+        db.insert(scrape_weather.scrape_all_weather())
 
 #
 #
