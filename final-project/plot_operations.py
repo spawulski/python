@@ -2,6 +2,7 @@
 This is the documentation for plot_operations module.
 
 This module builds and shows all graph plots.
+By: Stephen Pawulski.
 """
 
 import matplotlib.pyplot as plt
@@ -9,7 +10,7 @@ import db_operations
 
 
 class PlotOperations():
-    """Build a graph that appears on screen."""
+    """Build a graph that appears on screen. By: Stephen Pawulski."""
 
     months_dict = {1: [], 2: [], 3: [], 4: [], 5: [],
                    6: [], 7: [], 8: [], 9: [], 10: [],
@@ -18,7 +19,7 @@ class PlotOperations():
     months_array = []
 
     def build_plot(self, a, b):
-        """Build a plot using data that is passed in."""
+        """Build a plot using data that is passed in. By: Stephen Pawulski."""
         # Instantiate db object
         db = db_operations.DBOperations()
         # Query db for all weather data from year a - year b
@@ -60,7 +61,3 @@ class PlotOperations():
         ax.set_ylabel("Temperature (Celcius)")
 
         plt.show()
-
-# Build Plot example
-# plot = PlotOperations()
-# plot.build_plot(1996, 2019)

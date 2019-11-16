@@ -3,6 +3,7 @@ This is the documentation for scrape_weather module.
 
 scrape_weather scrapes the daily weather from the internet
 and passes a dict with the data.
+By: Stephen Pawulski.
 """
 from html.parser import HTMLParser
 from datetime import date
@@ -12,7 +13,7 @@ import badwords
 
 
 class MyHTMLParser(HTMLParser):
-    """Parse data from web pages."""
+    """Parse data from web pages. By: Stephen Pawulski."""
 
     attr_flag = False
     data_counter = 0
@@ -31,6 +32,7 @@ class MyHTMLParser(HTMLParser):
         Eliminate bad attributes by checking against
         badwords. Save date to class variable.
         Set flag to true for handle_data().
+        By: Stephen Pawulski.
         """
         f = '%B %d, %Y'
         t = '%Y-%m-%d'
@@ -43,7 +45,7 @@ class MyHTMLParser(HTMLParser):
                     self.attr_flag = True
 
     def float_checker(self, s):
-        """Check value to see if float."""
+        """Check value to see if float. By: Stephen Pawulski."""
         try:
             float(s)
             return True
@@ -51,14 +53,22 @@ class MyHTMLParser(HTMLParser):
             return False
 
     def data_reset(self):
-        """Reset variables used in weather dict creation."""
+        """
+        Reset variables used in weather dict creation.
+
+        By: Stephen Pawulski.
+        """
         self.day = ''
         self.max = ''
         self.min = ''
         self.mean = ''
 
     def handle_data(self, data):
-        """Extract the actual weather data we want from the page."""
+        """
+        Extract the actual weather data we want from the page.
+
+        By: Stephen Pawulski.
+        """
         # Check attribute flag
         if self.attr_flag:
             # If data is a float, at this point we know its the data we want
@@ -99,7 +109,11 @@ all_weather = {}
 
 
 def scrape_page(url):
-    """Scrape a url that is passed in for weather data."""
+    """
+    Scrape a url that is passed in for weather data.
+
+    By: Stephen Pawulski.
+    """
     monthly_weather = {}
     monthly_weather = myparser.temp_weather
     myparser.temp_weather.clear()
@@ -108,13 +122,6 @@ def scrape_page(url):
 
     myparser.feed(html)
     return monthly_weather
-    # print(myparser)
-
-    # for k, v in myparser.weather.items():
-    # print(k)
-    #    monthly_weather.update({k: v})
-
-    # return monthly_weather
 
 
 def scrape_all_weather():
@@ -123,6 +130,7 @@ def scrape_all_weather():
 
     start with today and moving backward until there is no more weather
     data to scrape, get all weather data.
+    By: Stephen Pawulski.
     """
     a = 'https://climate.weather.gc.ca/'
     b = 'climate_data/daily_data_e.html?'
@@ -135,10 +143,8 @@ def scrape_all_weather():
     current_year = today.strftime("%Y")
     # Iterate through all of the years starting with current and working back.
     for year in range(int(current_year), 0, -1):
-        print(str(year))
         # Iterate through the months backward, starting with December
         for month in range(12, 0, -1):
-            print(str(month))
             # Build url to scrape using year and month
             url = full + '1' + '&Year=' + str(year) + '&Month=' + str(month)
             w = scrape_page(url)
@@ -156,13 +162,12 @@ def scrape_all_weather():
                 # all of the weather data from the site.
                 # Return the full dictionary with all weather data
                 if int(year_from_page) != year:
-                    print(url)
                     return myparser.weather
                 myparser.weather.update({k: v})
 
 
 def recent_weather(t):
-    """Update weather db."""
+    """Update weather db. By: Stephen Pawulski."""
     a = 'https://climate.weather.gc.ca/'
     b = 'climate_data/daily_data_e.html?'
     c = 'StationID=27174&timeframe=2&'
@@ -175,9 +180,7 @@ def recent_weather(t):
     current_month = int(today.strftime("%m"))
 
     to_year = int(t[0:4])
-    print(to_year)
     to_month = int(t[5:7])
-    print(to_month)
 
     if current_year == to_year and current_month == to_month:
         a = full + '1' + '&Year=' + str(current_year) + '&Month='
@@ -190,14 +193,11 @@ def recent_weather(t):
             # Get year value to appear as 4 digits
             year_from_page = datetime.datetime.strptime(y, "%Y")
             year_from_page = year_from_page.strftime("%Y")
-            print(url)
             myparser.weather.update({k: v})
             return myparser.weather
     else:
         while current_year >= to_year:
-            print(current_year)
             while current_month >= to_month:
-                print(current_month)
                 a = full + '1' + '&Year=' + str(current_year)
                 url = a + '&Month=' + str(current_month)
                 w = scrape_page(url)
@@ -208,17 +208,8 @@ def recent_weather(t):
                     # Get year value to appear as 4 digits
                     year_from_page = datetime.datetime.strptime(y, "%Y")
                     year_from_page = year_from_page.strftime("%Y")
-                    print(url)
                     myparser.weather.update({k: v})
 
                 current_month -= 1
             current_year -= 1
         return myparser.weather
-
-
-# recent_weather('2018-04-21')
-
-
-# scrape_all_weather()
-
-# print(all_weather)

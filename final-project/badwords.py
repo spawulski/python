@@ -2,7 +2,8 @@
 Badwords docs.
 
 This is a pretty ugly array of words, and I wanted to keep it out of the
-code for scrape_weather.py module.
+code for scrape_weather.py module
+By: Stephen Pawulski.
 """
 
 a = 'Environment and Climate Change Canada'

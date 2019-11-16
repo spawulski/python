@@ -2,6 +2,7 @@
 This is the documentation for db_operations module.
 
 This module performs all of the nessessary database interatcion.
+By: Stephen Pawulski
 """
 
 
@@ -10,10 +11,10 @@ import scrape_weather
 
 
 class DBOperations():
-    """Interact with a database."""
+    """Interact with a database. By: Stephen Pawulski."""
 
     def __init__(self):
-        """Build database."""
+        """Build database. By: Stephen Pawulski."""
         try:
             self.conn = sqlite3.connect("test.sqlite")
 
@@ -33,7 +34,7 @@ class DBOperations():
             print("Error:", e)
 
     def insert(self, dict):
-        """Insert a dict into the table."""
+        """Insert a dict into the table. By: Stephen Pawulski."""
         try:
             loca = "Winnipeg, MB"
             sql = """insert into samples(date, location, min_temp,
@@ -44,9 +45,13 @@ class DBOperations():
                 try:
                     data = (k, loca, v['Min'], v['Max'], v['Mean'])
                     if not self.check_if_exist(k):
-                        self.cur.execute(sql, data)
+                        try:
+                            self.cur.execute(sql, data)
+                            print(k + " added to database")
+                        except Exception as e:
+                            print("Error:", e)
                     else:
-                        print(k + " was not inserted into db")
+                        print(k + " already exists in the db")
                 except Exception as e:
                     print("Error:", e)
 
@@ -55,24 +60,24 @@ class DBOperations():
             print("Error:", e)
 
     def check_if_exist(self, day):
-        """Check if there is a database entry for specific day."""
-        # sql = """SELECT id, date, location FROM samples WHERE date=?"""
-        # self.cur.execute(sql, (day))
+        """
+        Check if there is a database entry for specific day.
 
-        # result = self.cur.fetchone()
-        result = self.cur.execute("""SELECT date
-                                     FROM samples
-                                     WHERE date=?""", (day, )).fetchone()
-        if result:
-            print(result)
-            print("Date did exist")
-            return True
-        else:
-            print("Date did not exist")
-            return False
+        By: Stephen Pawulski.
+        """
+        try:
+            result = self.cur.execute("""SELECT date
+                                         FROM samples
+                                         WHERE date=?""", (day, )).fetchone()
+            if result:
+                return True
+            else:
+                return False
+        except Exception as e:
+            print("Error:", e)
 
     def printdb(self):
-        """Print out contents of dataBase."""
+        """Print out contents of database.  By: Stephen Pawulski."""
         try:
             for row in self.cur.execute("""SELECT *
                                            FROM samples
@@ -85,7 +90,11 @@ class DBOperations():
             print("Error:", e)
 
     def between(self, a, b):
-        """Get weather data within a range passed in to method."""
+        """
+        Get weather data within a range passed in to method.
+
+        By: Stephen Pawulski.
+        """
         to_pass = []
         sql = """SELECT date, min_temp, max_temp, avg_temp
                  FROM samples
@@ -95,52 +104,56 @@ class DBOperations():
         data = (a, b)
         try:
             for row in self.cur.execute(sql, data):
-                to_pass.append(row)
-                # print(row)
+                try:
+                    to_pass.append(row)
+                except Exception as e:
+                    print("Error:", e)
         except Exception as e:
             print("Error", e)
         return to_pass
 
     def recent(self):
-        """Return only the date of the most recent db entry."""
+        """
+        Return only the date of the most recent db entry.
+
+        By: Stephen Pawulski.
+        """
         sql = """SELECT date
                  FROM samples
                  ORDER BY date DESC
                  LIMIT 1"""
-        for row in self.cur.execute(sql):
-            print(row)
-            return row
+
+        try:
+            for row in self.cur.execute(sql):
+                try:
+                    return row
+                except Exception as e:
+                    print("Error:", e)
+        except Exception as e:
+            print("Error:", e)
 
     def oldest(self):
-        """Return only the date of the most recent db entry."""
+        """
+        Return only the date of the most recent db entry.
+
+        By: Stephen Pawulski.
+        """
         sql = """SELECT date
                  FROM samples
                  ORDER BY date ASC
                  LIMIT 1"""
         for row in self.cur.execute(sql):
-            print(row)
             return row
 
     def update(self, date):
-        """Update db."""
+        """Update db. By: Stephen Pawulski."""
         db = DBOperations()
         db.insert(scrape_weather.recent_weather(date))
 
     def scrape_all(self):
-        """Insert the full scrape into db."""
+        """Insert the full scrape into db. By: Stephen Pawulski."""
         db = DBOperations()
         db.insert(scrape_weather.scrape_all_weather())
-
-#
-#
-# This is example of between
-#
-#
-# try:
-#    sample_database = DBOperations()
-#    sample_database.between('2015', '2020')
-# except Exception as e:
-#    print("Error", e)
 
 
 if __name__ == "__main__":
@@ -153,9 +166,5 @@ if __name__ == "__main__":
             sample_database.insert(scrape_weather.scrape_all_weather())
         except Exception as e:
             print("Error:", e)
-        # try:
-        # sample_database.printdb()
-        # except Exception as e:
-        #    print("Error:", e)
     except Exception as e:
         print("Error:", e)
