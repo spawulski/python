@@ -96,15 +96,19 @@ class DBOperations():
         By: Stephen Pawulski.
         """
         to_pass = []
+        start = a + "-01-01"
+        end = b + "-12-31"
+
         sql = """SELECT date, min_temp, max_temp, avg_temp
                  FROM samples
                  WHERE samples.date between
                  ? AND ?
                  ORDER BY date"""
-        data = (a, b)
+        data = (start, end)
         try:
             for row in self.cur.execute(sql, data):
                 try:
+                    print(row)
                     to_pass.append(row)
                 except Exception as e:
                     print("Error:", e)

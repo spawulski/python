@@ -56,7 +56,10 @@ class PlotOperations():
         ax = fig.add_subplot(111)
         ax.boxplot(self.months_array)
         mtd = "Monthy Temperature Distrubution for: "
-        ax.set_title(mtd + str(a) + " to " + str(b))
+        if a == b:
+            ax.set_title(mtd + str(a))
+        else:
+            ax.set_title(mtd + str(a) + " to " + str(b))
         ax.set_xlabel("Month")
         ax.set_ylabel("Temperature (Celcius)")
 

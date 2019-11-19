@@ -63,7 +63,7 @@ def year_prompt(pro):
     a = " and "
     try:
         n = str(pro.old_year)
-        o = str(int(pro.recent_year) - 1)
+        o = str(int(pro.recent_year))  # - 1)
     except Exception as e:
         print("Error:", e)
 
@@ -100,11 +100,11 @@ def year_range():
     try:
         yo = int(pro.old_year)
         yr = int(pro.recent_year)
-        y2 = 'Please enter year later than '
+        y2 = 'Please enter year including or later than '
         ped = 'Please enter a 4 digit year\n'
         s = "(Must be at least {})\n".format(pro.old_year)
         t = "(Max value can be {})\n".format(pro.recent_year)
-        while year_1 < yo or year_1 > yr - 1:
+        while year_1 < yo or year_1 > yr:
             while True:
                 try:
                     year_1 = (int(input(ped + s)))
@@ -118,8 +118,9 @@ def year_range():
                 try:
                     year_2 = (int(input(y2 + str(year_1) + '\n' + t)))
                     years[1] = year_2
-                    if year_2 <= year_1:
+                    if year_2 < year_1:
                         year_2 = 100000000000000
+                    print(year_2)
                     break
                 except ValueError:
                     print('Please enter an integer')
