@@ -16,7 +16,7 @@ class DBOperations():
     def __init__(self):
         """Build database. By: Stephen Pawulski."""
         try:
-            self.conn = sqlite3.connect("test.sqlite")
+            self.conn = sqlite3.connect("weather.sqlite")
 
             self.cur = self.conn.cursor()
             try:
@@ -108,7 +108,7 @@ class DBOperations():
         try:
             for row in self.cur.execute(sql, data):
                 try:
-                    print(row)
+                    # print(row)
                     to_pass.append(row)
                 except Exception as e:
                     print("Error:", e)
